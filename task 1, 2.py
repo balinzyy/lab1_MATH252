@@ -9,11 +9,13 @@ alt.renderers.enable("browser")
 def stretch(X,a,b):
     newx = matrixtransformer(X)
     STR = np.array([[a, 0],[0,b],])
+    print("Stretch matrix:\n", STR)
     return matrixtransformer(STR @ newx)
 
 def shear(X,a,b):
     newx = matrixtransformer(X)
     SHR = np.array([[1, a], [b, 1], ])
+    print("Shear matrix:\n", SHR)
     return matrixtransformer(SHR @ newx)
 
 def reflection(X,a,b):
@@ -22,11 +24,13 @@ def reflection(X,a,b):
     [a**2 - b**2, 2*a*b],
     [2*a*b, b**2 - a**2]
     ], dtype=float) / (a**2 + b**2)
+    print("Reflection matrix:\n", REF)
     return matrixtransformer(REF @ newx)
 
 def rotation(X,angle):
     newx = matrixtransformer(X)
     ROT = np.array([[cos(angle), -sin(angle)], [sin(angle), cos(angle)]])
+    print("Rotation matrix:\n", ROT)
     return matrixtransformer(ROT @ newx)
 
 def matrixtransformer(A):
@@ -71,48 +75,58 @@ batman = np.array([[0, 0], [1, 0.2], [0.4, 1], [0.5, 0.4], [0, 0.8], [-0.5, 0.4]
 
 original_lynx = lynx.copy()
 
-img0 = showimage(lynx)
+img0 = showimage(lynx).properties(title="Original")
+
+print()
+print("FIRST ORDER")
+print()
 
 L1 = stretch(lynx, 1.5, 0.7)
 L2 = shear(L1, 0.5, 0)
 L3 = rotation(L2, np.pi / 4)
 
-img1 = showimage(L1)
-img2 = showimage(L2)
-img3 = showimage(L3)
+img1 = showimage(L1).properties(title="1: Stretch")
+img2 = showimage(L2).properties(title="1: Stretch → Shear")
+img3 = showimage(L3).properties(title="1: Stretch → Shear → Rotate")
 
-mtx1 = L1
-mtx2 = L2
-mtx3 = L3
+print()
+print("SECOND ORDER")
+print()
 
 L1 = shear(lynx, 0.5, 0)
 L2 = stretch(L1, 1.5, 0.7)
 L3 = rotation(L2, np.pi / 4)
 
-img4 = showimage(L1)
-img5 = showimage(L2)
-img6 = showimage(L3)
+img4 = showimage(L1).properties(title="2: Shear")
+img5 = showimage(L2).properties(title="2: Shear → Stretch")
+img6 = showimage(L3).properties(title="2: Shear → Stretch → Rotate")
 
-mtx4 = L1
-mtx5 = L2
-mtx6 = L3
-
+print()
+print("THIRD ORDER")
+print()
 
 L1 = rotation(lynx, np.pi / 4)
 L2 = shear(L1, 0.5, 0)
 L3 = stretch(L2, 1.5, 0.7)
 
-img7 = showimage(L1)
-img8 = showimage(L2)
-img9 = showimage(L3)
+img7 = showimage(L1).properties(title="3: Rotate")
+img8 = showimage(L2).properties(title="3: Rotate → Shear")
+img9 = showimage(L3).properties(title="3: Rotate → Shear → Stretch")
 
-mtx7 = L1
-mtx8 = L2
-mtx9 = L3
+print()
+print("FOURTH ORDER")
+print()
 
-combined = alt.hconcat(img0, img1, img2, img3, img0, img4, img5, img6, img0, img7, img8, img9)
+L1 = stretch(lynx, 1.5, 0.7)
+L2 = rotation(L1, np.pi / 4)
+L3 = shear(L2, 0.5, 0)
+
+img10 = showimage(L1).properties(title="4: Stretch")
+img11 = showimage(L2).properties(title="4: Stretch → Rotate")
+img12 = showimage(L3).properties(title="4: Stretch → Rotate → Shear")
+
+combined = alt.hconcat(img0, img1, img2, img3, img0, img4, img5, img6, img0, img7, img8, img9, img10, img11, img12)
 combined.show()
 
-mtxes = [mtx1, mtx2, mtx3, mtx4, mtx5, mtx6, mtx7, mtx8, mtx9]
-for i in mtxes:
-    print(i)
+
+
